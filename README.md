@@ -21,7 +21,9 @@ Prerequisites:
 1. Compile the C++ Engine
    To generate the shared library, run the following command in your terminal:
    Windows
+   '''console
    g++ -shared -o engine.dll src/renderer.cpp src/engine_api.cpp src/math.cpp -Iinclude -std=c++20
+   '''
    Linux/macOS
    g++ -shared -fPIC -o engine.so src/renderer.cpp src/engine_api.cpp src/math.cpp -Iinclude -std=c++20
 3. Run the Application
