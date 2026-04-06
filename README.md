@@ -18,15 +18,17 @@ Prerequisites:
 - C++ Compiler (GCC/MinGW, Clang, or MSVC)
 - Dependencies: pip install numpy
   
-1. Compile the C++ Engine
-   To generate the shared library, run the following command in your terminal:
+1. ### Compile the C++ Engine
+   To generate the shared library, run the following command in your terminal:  
    Windows
-   '''console
+   ```
    g++ -shared -o engine.dll src/renderer.cpp src/engine_api.cpp src/math.cpp -Iinclude -std=c++20
-   '''
+   ```
    Linux/macOS
+   ```
    g++ -shared -fPIC -o engine.so src/renderer.cpp src/engine_api.cpp src/math.cpp -Iinclude -std=c++20
-3. Run the Application
+   ```
+3. ### Run the Application
    Ensure the compiled .dll or .so file is in the root directory, then run:
    python app.py
 
@@ -37,6 +39,13 @@ Prerequisites:
 - sample/: Contains sample .txt files for cameras and 3D object vertices.
 
 # Project Roadmap
-- Phase 1: Graphical Core – 3D-to-2D projection, clipping, matrix transformations, etc.
-- Phase 2: Physics Integration – Implementation of a rigid-body physics solver and collision detection algorithms.
-- Phase 3: Logic Engine – Scripting interface for entity-component management and game state handling.
+### Phase 1: Graphical Core
+- Transformations: Rotation, Scaling, and Translation
+- Perspectives: Parallel and Projection
+- Clipping
+- Resolution <-- I am here
+- Ray Tracing
+### Phase 2: Physics Integration
+- TBD
+### Phase 3: Logic Engine
+- TBD
