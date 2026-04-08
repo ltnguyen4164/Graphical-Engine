@@ -131,6 +131,8 @@ std::vector<Line> Engine::get_lines(int width, int height, int index)
     
     if (cam.type == "parallel")
         parallel_projection(cam);
+    else if (cam.type == "perspective")
+        perspective_projection(cam);
     
     std::vector<Line> lines;
     auto process_edge = [&](Vec3 a, Vec3 b)
@@ -197,8 +199,10 @@ void Engine::parallel_projection(Camera& cam)
     Vec3 vpn;
     vpn.x = cam.vpn[0], vpn.y = cam.vpn[1], vpn.z = cam.vpn[2];
     float denom = sqrt(vpn.y * vpn.y + vpn.z * vpn.z);
-    float x_cos = vpn.z / denom;
-    float x_sin = vpn.y / denom;
+    float x_cos;
+    float x_sin;
+    (denom != 0) ? x_cos = vpn.z / denom : x_cos = 1;
+    (denom != 0) ? x_sin = vpn.y / denom : x_sin = 0;
     
     Mat4 R_x;
     R_x.m[1][1] = x_cos;
@@ -289,23 +293,20 @@ void Engine::parallel_projection(Camera& cam)
 
 void Engine::perspective_projection(Camera& cam)
 {
-    // Translate VRP to origin
+    // Translate VRP to origin (0,0,0)
     Vec3 vrp;
     vrp.x = cam.vrp[0], vrp.y = cam.vrp[1], vrp.z = cam.vrp[2];
     Mat4 translation_matrix = trans_m(-vrp.x, -vrp.y, -vrp.z);
     vrp.x = 0, vrp.y = 0, vrp.z = 0;
-
+    
     // Rotate VPN around x until it lies in the xz plane with positive z
     Vec3 vpn;
     vpn.x = cam.vpn[0], vpn.y = cam.vpn[1], vpn.z = cam.vpn[2];
-    float denom = 1;
-    if ((vpn.y * vpn.y + vpn.z * vpn.z) != 0)    
-        denom = sqrt(vpn.y * vpn.y + vpn.z * vpn.z);
-    float x_cos = vpn.z / denom;
-    denom = 0;
-    if ((vpn.y * vpn.y + vpn.z * vpn.z) != 0)
-        denom = sqrt(vpn.y * vpn.y + vpn.z * vpn.z);
-    float x_sin = vpn.y / denom;
+    float denom = sqrt(vpn.y * vpn.y + vpn.z * vpn.z);
+    float x_cos;
+    float x_sin;
+    (denom != 0) ? x_cos = vpn.z / denom : x_cos = 1;
+    (denom != 0) ? x_sin = vpn.y / denom : x_sin = 0;
     
     Mat4 R_x;
     R_x.m[1][1] = x_cos;
@@ -382,18 +383,24 @@ void Engine::perspective_projection(Camera& cam)
     
     denom = ((umax - umin) / 2) * (vrp.z + wmin);
     if (std::abs(vrp.z + wmax) > std::abs(vrp.z + wmin))
+    {    
         denom = ((umax - umin) / 2) * (vrp.z + wmax);  
         s_x = std::abs(vrp.z / denom);
+    }
     
     denom = ((vmax - vmin) / 2) * (vrp.z + wmin);
     if (std::abs(vrp.z + wmax) > std::abs(vrp.z + wmin))
+    {    
         denom = ((vmax - vmin) / 2) * (vrp.z + wmax);
         s_y = std::abs(vrp.z / denom);
-    
+    }
+
     denom = vrp.z + wmin;
     if (std::abs(vrp.z + wmax) > std::abs(vrp.z + wmin))
+    {   
         denom = vrp.z + wmax;
         s_z = 1 / denom;
+    }
 
     Mat4 scale_matrix = scale_m(s_x, s_y, s_z);
 
@@ -402,6 +409,12 @@ void Engine::perspective_projection(Camera& cam)
     for (auto& v : vectors)
     {
         v = mxv(mat, v);
+
+        if (v.z != 0)
+        {
+            v.x /= v.z;
+            v.y /= v.z;
+        }
     }
 }
 
@@ -473,10 +486,10 @@ void Engine::translate(float dx, float dy, float dz)
 
 std::pair<float, float> Engine::window_to_viewport(float x, float y, int width, int height, const Camera& cam)
 {
-    float umin = cam.view_volume[0];
-    float umax = cam.view_volume[1];
-    float vmin = cam.view_volume[2];
-    float vmax = cam.view_volume[3];
+    float umin = -1;
+    float umax = 1;
+    float vmin = -1;
+    float vmax = 1;
 
     float xmin = cam.viewport[0];
     float ymin = cam.viewport[1];
