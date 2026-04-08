@@ -17,6 +17,7 @@ void Engine::load_file(const std::string& filename)
 
     vectors.clear();
     original_vectors.clear();
+    changed_vectors.clear();
     faces.clear();
 
     std::string line;
