@@ -29,9 +29,10 @@ Prerequisites:
    g++ -shared -fPIC -o engine.so src/renderer.cpp src/engine_api.cpp src/math.cpp -Iinclude -std=c++20
    ```
 3. ### Run the Application
-   Ensure the compiled .dll or .so file is in the root directory, then run:
+   Ensure the compiled .dll or .so file is in the root directory, then run:  
+   ``` 
    python app.py
-
+   ``` 
 # Project Structure
 - src/renderer.cpp: Core logic for projections and clipping.
 - src/math.cpp : Helper functions for matrix and vector multiplication
@@ -39,13 +40,8 @@ Prerequisites:
 - sample/: Contains sample .txt files for cameras and 3D object vertices.
 
 # Project Roadmap
-### Phase 1: Graphical Core
 - Transformations: Rotation, Scaling, and Translation
 - Perspectives: Parallel and Projection
 - Clipping
 - Resolution <-- I am here
 - Ray Tracing
-### Phase 2: Physics Integration
-- TBD
-### Phase 3: Logic Engine
-- TBD
